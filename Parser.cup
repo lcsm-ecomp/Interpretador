@@ -1,0 +1,43 @@
+
+import java_cup.runtime.*;
+import tree.*;
+
+
+terminal EQUAL, ESCREVA, APAR, FPAR, IF, THEN, ELSE, WHILE, DO ;
+terminal Integer INT;
+terminal String OP;
+terminal String ID;
+
+non terminal Com programa, comando, lista_comandos;
+non terminal Exp expressao;
+
+precedence left OP;
+
+start with programa; 
+
+programa ::= lista_comandos:l 
+             {: RESULT = l; :} 
+           ;
+
+lista_comandos ::= comando:c1 lista_comandos:c2
+				{: RESULT = new Sequencia(c1,c2); :}
+				| comando:c 
+				{: RESULT = c; :}
+				;
+
+comando ::= ID:var EQUAL expressao:val {: RESULT = new Atrib(var,val); :} 
+        | ESCREVA expressao:e {: RESULT = new Escreva(e); :}
+		| APAR lista_comandos:lc FPAR {: RESULT = lc; :}
+		| IF expressao:e THEN comando:cTrue ELSE comando:cFalse {: RESULT = new Selecao(e,cTrue,cFalse); :}
+		| WHILE expressao:t DO comando:c {:RESULT = new Repeticao(t,c); :}
+		;
+		
+expressao ::= INT:i {: RESULT = new Val(i); :}
+            | ID:i {: RESULT = new Var(i); :}
+            | expressao:e OP:o expressao:d //cuidado assim o analisador não valida precedencia
+              {: RESULT = new Op(e,o,d); :}
+            | APAR expressao:e FPAR {: RESULT = e; :}
+            ;
+
+
+	

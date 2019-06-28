@@ -1,0 +1,10 @@
+val = 10
+soma = 0
+produto = 1
+while val > 0 do (
+   soma = soma + val
+   produto = produto * val
+   val = val - 1
+)
+escreva soma
+escreva produto
